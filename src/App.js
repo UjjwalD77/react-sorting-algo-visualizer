@@ -1,14 +1,16 @@
 import React,{useEffect, useState} from 'react'
 function App() {
-  const [algo, setAlgo] = useState('')
+  const [algo, setAlgo] = useState()
   const [data, setData] = useState([])
-  const [curMethod, setCurMethod] = useState()
+  const [curMethod, setCurMethod] = useState('bubbleSort')
   const [curSelectedIndexL, setCurSelectedIndexL] = useState(2)
   const [curSelectedIndexR, setCurSelectedIndexR] = useState(4)
   const [arraySize, setArraySize] = useState(50)
-  const [delay, setDelay] = useState(1)
+  const [delay, setDelay] = useState(100)
 
-  const bitonicSort = (arr, direction)=> {
+  const bitonicSort = async(arr, direction)=> {
+    const timer = ms => new Promise(res => setTimeout(res, ms))
+
     const bitonicMerge = (arr, direction)=> {
       const n = arr.length;
       if (n <= 1) {
@@ -31,13 +33,21 @@ function App() {
       const m = n / 2;
       const left = arr.slice(0, m);
       const right = arr.slice(m, n);
+      setCurSelectedIndexL(m)
+      setCurSelectedIndexR(n)
       bitonicSort(left, true);
       bitonicSort(right, false);
-      return bitonicMerge(left.concat(right), direction);
+      await timer(delay);
+      const sorted = bitonicMerge(arr, direction);
+      console.log(sorted)
+      setData(sorted);
+      return sorted;
+      
     }
   }
     
   const bogoSort = ()=>{console.log('bogoSort Called')}
+
   const bubbleSort = async(array)=>{
     const timer = ms => new Promise(res => setTimeout(res, ms))
     for(var i = 0; i <= array.length-1; i++){
@@ -55,16 +65,95 @@ function App() {
           array[j+1] = temp
           setData(array)
         }
-        await timer(delay); 
+            await timer(delay); 
             console.log(data);
           }
         }
 }
 
   const bucketSort = ()=>{console.log('bucketSort Called')}
-  const cocktailSort = ()=>{console.log('cocktailSort Called')}
+
+  const cocktailSort = async(arr)=> {
+    const timer = ms => new Promise(res => setTimeout(res, ms))
+
+    let start = 0, end = arr.length, swapped = true;
+  
+    while (swapped) {
+      swapped = false;
+      for (let i = start; i < end - 1; i++) {
+        setCurSelectedIndexL(i)
+        setCurSelectedIndexR(i+1)
+        if (arr[i] > arr[i+1]) {
+          let temp = arr[i];
+          arr[i] = arr[i+1];
+          arr[i+1] = temp;
+          swapped = true;
+          setData(arr)
+        }
+        await timer(delay)
+        
+      }
+      
+      end--;
+      if (!swapped)
+      break;
+      
+      swapped = false;
+      for (let i = end - 1; i > start; i--) {
+        setCurSelectedIndexL(i)
+        setCurSelectedIndexR(i+1)
+        if (arr[i - 1] > arr[i]) {
+          let temp = arr[i];
+          arr[i] = arr[i - 1];
+          arr[i - 1] = temp;
+          swapped = true;
+          setData(arr)
+        }
+        await timer(delay)
+      }
+      
+      start++;
+    }
+    setData(arr)
+    return arr;
+  }
+
   const combSort = ()=>{console.log('combSort Called')}
-  const countingSort = ()=>{console.log('countingSort Called')}
+
+  const countingSort = async(arr)=>{
+    const timer = ms => new Promise(res => setTimeout(res, ms))
+
+    const n = arr.length;
+    const count = new Array(Math.max(...arr) + 1).fill(0);
+    const output = new Array(n);
+  
+    // Count frequencies of elements
+    for (let i = 0; i < n; i++) {
+      count[arr[i]]++;
+      setCurSelectedIndexL(i)
+      // setData(arr)
+    }
+    
+    // Compute prefix sums
+    for (let i = 1; i < count.length; i++) {
+      count[i] += count[i - 1];
+      setCurSelectedIndexR(i)
+      // setData(arr)
+    }
+    
+    // Place elements in sorted order
+    for (let i = n - 1; i >= 0; i--) {
+      setCurSelectedIndexL(i)
+      // setCurSelectedIndexR(count[arr[i]] - 1)
+      output[count[arr[i]] - 1] = arr[i];
+      count[arr[i]]--;
+      // setData(output)
+      await timer(delay)
+
+    }
+    
+    setData(output)
+  }
   const cubeSort = ()=>{console.log('cubeSort Called')}
   const cycleSort = ()=>{console.log('cycleSort Called')}
   const flashSort = ()=>{console.log('flashSort Called')}
@@ -74,9 +163,55 @@ function App() {
   const mergeSort = ()=>{console.log('mergeSort Called')}
   const pancakeSort = ()=>{console.log('pancakeSort Called')}
   const pigeonholeSort = ()=>{console.log('pigeonholeSort Called')}
-  const quickSort = ()=>{console.log('quickSort Called')}
-  const radixSort = ()=>{console.log('radixSort Called')}
-  const selectionSort = ()=>{console.log('selectionSort Called')}
+  const quickSort = (arr)=>{
+    const left = 0
+    const right = arr.length - 1
+    if (left < right) {
+      const pivotIndex = partition(arr, left, right);
+      quickSort(arr, left, pivotIndex - 1);
+      quickSort(arr, pivotIndex + 1, right);
+    }
+    setData(arr);
+    return arr;
+    
+    function partition(arr, left, right) {
+      setCurSelectedIndexL(left)
+      setCurSelectedIndexR(right)
+      const pivot = arr[right];
+      let i = left - 1;
+      for (let j = left; j < right; j++) {
+        if (arr[j] < pivot) {
+          i++;
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+      }
+      [arr[i + 1], arr[right]] = [arr[right], arr[i + 1]];
+      return i + 1;
+    }
+  }
+  const radixSort = async()=>{console.log('radixSort Called')}
+  const selectionSort = async(arr)=>{
+    const timer = ms => new Promise(res => setTimeout(res, ms))
+
+    const n = arr.length;
+    for (let i = 0; i < n - 1; i++) {
+      let minIndex = i;
+      for (let j = i + 1; j < n; j++) {
+        if (arr[j] < arr[minIndex]) {
+          setCurSelectedIndexL(j)
+          setCurSelectedIndexR(minIndex)
+          minIndex = j;
+        }
+      }
+      if (minIndex !== i) {
+        [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+      }
+      setData(arr)
+      await timer(delay)
+    }
+    setData(arr)
+    return arr;
+  }
   const shellSort = ()=>{console.log('shellSort Called')}
   const smoothSort = ()=>{console.log('smoothSort Called')}
   const spiralSort = ()=>{console.log('spiralSort Called')}
@@ -169,35 +304,37 @@ const BarChart = ({ data }) => {
       <div className='flex flex-row mb-6 mt-6'>
         <h1 className='text-4xl text-white font-bold p-2  '>Select an Algorithm :</h1>
         <select name="selectList" id="selectList" className='text-4xl ml-4 font-semibold text-center' >
-        <option value="bitonicSort" onClick={()=>setCurMethod('bitonicSort')} >Bitonic Sort</option>
-        <option value="bogoSort" onClick={()=>setCurMethod('bogoSort')} >Bogo Sort</option>
+        {/* <option value="bitonicSort" onClick={()=>setCurMethod('bitonicSort')} >Bitonic Sort</option> */}
+        {/* <option value="bogoSort" onClick={()=>setCurMethod('bogoSort')} >Bogo Sort</option> */}
         <option value="bubbleSort" onClick={()=>setCurMethod('bubbleSort')} >Bubble Sort</option>
-        <option value="bucketSort" onClick={()=>setCurMethod('bucketSort')} >Bucket Sort</option>
+        {/* <option value="bucketSort" onClick={()=>setCurMethod('bucketSort')} >Bucket Sort</option> */}
         <option value="cocktailSort" onClick={()=>setCurMethod('cocktailSort')} >Cocktail Sort</option>
-        <option value="combSort" onClick={()=>setCurMethod('combSort')} >Comb Sort</option>
-        <option value="countingSort" onClick={()=>setCurMethod('countingSort')} >Counting Sort</option>
-        <option value="cubeSort" onClick={()=>setCurMethod('cubeSort')} >Cube Sort</option>
-        <option value="cycleSort" onClick={()=>setCurMethod('cycleSort')} >Cycle Sort</option>
-        <option value="flashSort" onClick={()=>setCurMethod('flashSort')} >Flash Sort</option>
-        <option value="gnomeSort" onClick={()=>setCurMethod('gnomeSort')} >Gnome Sort</option>
-        <option value="heapSort" onClick={()=>setCurMethod('heapSort')} >Heap Sort</option>
-        <option value="insertionSort" onClick={()=>setCurMethod('insertionSort')} >Insertion Sort</option>
-        <option value="mergeSort" onClick={()=>setCurMethod('mergeSort')} >Merge Sort</option>
-        <option value="pancakeSort" onClick={()=>setCurMethod('pancakeSort')} >Pancake Sort</option>
-        <option value="pigeonholeSort" onClick={()=>setCurMethod('pigeonholeSort')} >Pigeonhole Sort</option>
-        <option value="quickSort" onClick={()=>setCurMethod('quickSort')} >Quick Sort</option>
-        <option value="radixSort" onClick={()=>setCurMethod('radixSort')} >Radix Sort</option>
+        {/* <option value="combSort" onClick={()=>setCurMethod('combSort')} >Comb Sort</option> */}
+        {/* <option value="countingSort" onClick={()=>setCurMethod('countingSort')} >Counting Sort</option> */}
+        {/* <option value="cubeSort" onClick={()=>setCurMethod('cubeSort')} >Cube Sort</option> */}
+        
+        {/* <option value="cycleSort" onClick={()=>setCurMethod('cycleSort')} >Cycle Sort</option> */}
+        {/* <option value="flashSort" onClick={()=>setCurMethod('flashSort')} >Flash Sort</option> */}
+        {/* <option value="gnomeSort" onClick={()=>setCurMethod('gnomeSort')} >Gnome Sort</option> */}
+        {/* <option value="heapSort" onClick={()=>setCurMethod('heapSort')} >Heap Sort</option> */}
+        {/* <option value="insertionSort" onClick={()=>setCurMethod('insertionSort')} >Insertion Sort</option> */}
+        {/* <option value="mergeSort" onClick={()=>setCurMethod('mergeSort')} >Merge Sort</option> */}
+        {/* <option value="pancakeSort" onClick={()=>setCurMethod('pancakeSort')} >Pancake Sort</option> */}
+        {/* <option value="pigeonholeSort" onClick={()=>setCurMethod('pigeonholeSort')} >Pigeonhole Sort</option> */}
+        {/* <option value="quickSort" onClick={()=>setCurMethod('quickSort')} >Quick Sort</option> */}
+        {/* <option value="radixSort" onClick={()=>setCurMethod('radixSort')} >Radix Sort</option> */}
         <option value="selectionSort" onClick={()=>setCurMethod('selectionSort')} >Selection Sort</option>
-        <option value="shellSort" onClick={()=>setCurMethod('shellSort')} >Shell Sort</option>
-        <option value="smoothSort" onClick={()=>setCurMethod('smoothSort')} >Smooth Sort</option>
-        <option value="spiralSort" onClick={()=>setCurMethod('spiralSort')} >Spiral Sort</option>
-        <option value="stoogeSort" onClick={()=>setCurMethod('stoogeSort')} >Stooge Sort</option>
-        <option value="strandSort" onClick={()=>setCurMethod('strandSort')} >Strand Sort</option>
-        <option value="timSort" onClick={()=>setCurMethod('timSort')} >Tim Sort</option>
-        <option value="treeSort" onClick={()=>setCurMethod('treeSort')} >Tree Sort</option>
+        {/* <option value="shellSort" onClick={()=>setCurMethod('shellSort')} >Shell Sort</option> */}
+        {/* <option value="smoothSort" onClick={()=>setCurMethod('smoothSort')} >Smooth Sort</option> */}
+        {/* <option value="spiralSort" onClick={()=>setCurMethod('spiralSort')} >Spiral Sort</option> */}
+        {/* <option value="stoogeSort" onClick={()=>setCurMethod('stoogeSort')} >Stooge Sort</option> */}
+        {/* <option value="strandSort" onClick={()=>setCurMethod('strandSort')} >Strand Sort</option> */}
+        {/* <option value="timSort" onClick={()=>setCurMethod('timSort')} >Tim Sort</option> */}
+        {/* <option value="treeSort" onClick={()=>setCurMethod('treeSort')} >Tree Sort</option> */}
 
         </select>
         <button className='bg-amber-300 text-black font-bold p-2 ml-20 text-4xl ' onClick={()=>handleSort(curMethod)} >Sort</button>
+        <button className='bg-amber-300 text-black font-bold p-2 ml-20 text-4xl ' onClick={()=>setData(shuffleNumbers(arraySize))} >New Data</button>
       </div>
       <div className=' bg-black h-max w-10/12 align-bottom justify-self-center ' >
       <BarChart data={data} />
