@@ -302,8 +302,8 @@ const BarChart = ({ data }) => {
   return (
     <div className='flex bg-gradient-to-br from-purple-900 via-purple-900 to-slate-400 flex-col h-screen' >
       <div className='flex flex-row mb-6 mt-6'>
-        <h1 className='text-4xl text-white font-bold p-2  '>Select an Algorithm :</h1>
-        <select name="selectList" id="selectList" className='text-4xl ml-4 font-semibold text-center' >
+        <h1 className='text-2xl text-white font-bold p-2  '>Select an Algorithm :</h1>
+        <select name="selectList" id="selectList" className='text-2xl ml-4 font-semibold text-center' >
         {/* <option value="bitonicSort" onClick={()=>setCurMethod('bitonicSort')} >Bitonic Sort</option> */}
         {/* <option value="bogoSort" onClick={()=>setCurMethod('bogoSort')} >Bogo Sort</option> */}
         <option value="bubbleSort" onClick={()=>setCurMethod('bubbleSort')} >Bubble Sort</option>
@@ -333,10 +333,23 @@ const BarChart = ({ data }) => {
         {/* <option value="treeSort" onClick={()=>setCurMethod('treeSort')} >Tree Sort</option> */}
 
         </select>
-        <button className='bg-amber-300 text-black font-bold p-2 ml-20 text-4xl ' onClick={()=>handleSort(curMethod)} >Sort</button>
-        <button className='bg-amber-300 text-black font-bold p-2 ml-20 text-4xl ' onClick={()=>setData(shuffleNumbers(arraySize))} >New Data</button>
+        <button className='bg-amber-300 text-black font-bold p-2 ml-20 text-2xl ' onClick={()=>handleSort(curMethod)} >Sort</button>
+        <button className='bg-amber-300 text-black font-bold p-2 ml-20 text-2xl ' onClick={()=>setData(shuffleNumbers(arraySize))} >New Data</button>
       </div>
-      <div className=' bg-black h-max w-10/12 align-bottom justify-self-center ' >
+      
+      <div className='flex flex-row' >
+        <div className='flex flex-row m-4 p-1  bg-white w-fit rounded-2xl '>
+          <h1 className='text-2xl text-black font-bold p-2'>Array Size [{arraySize}]</h1>
+          <input type="range" min="10" max="200" value={arraySize} className="slider" id="myRange" onChange={(e)=>setArraySize(e.target.value)} />
+        </div>
+        <div className='flex flex-row m-4 p-1  bg-white w-fit rounded-2xl '>
+          <h1 className='text-2xl text-black font-bold p-2'>Time Delay in ms [{delay}]</h1>
+          <input type="range" min="1" max="1000" value={delay} className="slider" id="myRange" onChange={(e)=>setDelay(e.target.value)} />
+        </div>
+      </div>
+
+
+      <div className=' bg-black h-max w-10/12 align-bottom self-center ' >
       <BarChart data={data} />
 
       </div>
