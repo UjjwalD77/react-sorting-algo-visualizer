@@ -1,6 +1,7 @@
 # React Sorting Algorithm Visualizer
 
 This project is a web-based sorting algorithm visualizer built using React.js. The purpose of the project is to help users visualize how different sorting algorithms work and how they compare in terms of efficiency.
+Try Here : https://ujjwald77.github.io/react-sorting-algo-visualizer/
 
 ## Features
 
